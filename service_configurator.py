@@ -1,6 +1,7 @@
+"""This script dynamically updates nginx configuration files every 20 seconds
+to route requests to other docker containers on the same network."""
 import json
 import logging
-import re
 import socket
 import subprocess
 import time
@@ -10,15 +11,12 @@ import colorlog
 logger = logging.getLogger(__name__)
 
 
-# VALID_HOSTNAME = re.compile('^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$')
-VALID_HOSTNAME = re.compile('')
-
-
 class NonZeroExitCode(Exception):
     pass
 
 
 def _run_call(*args):
+    """Helper function for making subprocess calls"""
     logger.debug(f'Running command: {args!r}')
     proc = subprocess.Popen(args, stdout=subprocess.PIPE)
     stdout, _ = proc.communicate()
@@ -29,6 +27,8 @@ def _run_call(*args):
 
 
 class Docker(object):
+    """Controls docker"""
+
     def __init__(self):
         self._current_container_info = None
 
@@ -68,6 +68,7 @@ class Docker(object):
 
 
 class Nginx(object):
+    """Controls nginx"""
     config_path = '/etc/nginx/conf.d/default.conf'
 
     def get_config(self):
@@ -110,6 +111,8 @@ class Nginx(object):
 
 
 def generate_config():
+    """Generates an nginx config file based on the names of docker containers
+    on the same network"""
     docker = Docker()
     current_network = docker.current_network
     current_container_name = docker.current_container_name
@@ -134,6 +137,8 @@ def generate_config():
 
 
 def update_config():
+    """Attempts to update the nginx configuration. Checks configuration syntax
+    and rolls back if invalid."""
     nginx = Nginx()
     config = generate_config()
     old_config = nginx.get_config()
@@ -167,15 +172,12 @@ def main():
 
 
 if __name__ == '__main__':
+    # Setup pretty logging
     handler = colorlog.StreamHandler()
     formatter = colorlog.ColoredFormatter(
         '%(log_color)s%(levelname)s:%(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(level=logging.DEBUG)
-    # logging.basicConfig(level=logging.DEBUG)
+    # Start
     main()
-    # d = Docker()
-    # from pprint import pprint
-    # pprint(d.list_container_names())
-    # pprint(d.get_container_info('nginx'))
