@@ -1,6 +1,8 @@
 # nginxd
 nginxd is the fastest way to setup service discovery and [virtual hosts](https://en.wikipedia.org/wiki/Virtual_hosting) on a single docker machine. It allows you to add and remove dockerized webapps without manually updating your nginx configuration.
 
+**Note:** I've since learned about [nginx-proxy](https://github.com/jwilder/nginx-proxy). You should probably use that over this project, it's much better (same idea though...)
+
 ## Usage
 1. Create a docker network: `docker network create nginxd`
 2. Run nginxd on that network: `docker run -it -v /var/run/docker.sock:/var/run/docker.sock --network=nginxd -p 80:80 nathanielobrown/nginxd`
