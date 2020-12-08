@@ -2,6 +2,7 @@
 nginxd is the fastest way to setup service discovery and [virtual hosts](https://en.wikipedia.org/wiki/Virtual_hosting) on a single docker machine. It allows you to add and remove dockerized webapps without manually updating your nginx configuration.
 
 ~~**Note:** I've since learned about [nginx-proxy](https://github.com/jwilder/nginx-proxy). You should probably use that over this project, it's much better.~~
+
 **Note:** Now I recomend using [Traefik](https://github.com/traefik/traefik).
 
 ## Usage
